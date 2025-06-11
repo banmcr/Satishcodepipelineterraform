@@ -35,14 +35,16 @@ phases:
           echo "=============================================================="
           echo "Running Terraform for account: $ACCOUNT_ID"
           echo "=============================================================="
-          echo ----------------checking terraform init----------------
-          terraform init -reconfigure
           if [ "$TF_ITEM" = "plan" ]; then
+            echo ----------------checking terraform init----------------
+            terraform init -backend-config="bucket=my-terraform-state-$ACCOUNT_ID" -backend-config="key=statefolder/$ACCOUNT_ID/terraform.tfstate" -backend-config="region=ap-south-1" -backend-config="use_lockfile = true"
             echo ----------------Doing Terraform plan---------------------
             terraform plan -var="account_id=$ACCOUNT_ID"
             echo ----------------terraform plan completed on `date`------------------
             touch Output/plan-$ACCOUNT_ID-done
           elif [ "$TF_ITEM" = "apply" ]; then
+            echo ----------------checking terraform init----------------
+            terraform init -backend-config="bucket=my-terraform-state-$ACCOUNT_ID" -backend-config="key=statefolder/$ACCOUNT_ID/terraform.tfstate" -backend-config="region=ap-south-1" -backend-config="use_lockfile = true"
             echo ----------------Doing Terraform apply----------------
             terraform apply -var="account_id=$ACCOUNT_ID" --auto-approve
             echo ----------------terraform apply completed on `date`-----------------

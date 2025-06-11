@@ -6,11 +6,5 @@ provider "aws" {
 }
 
 terraform {
-  backend "s3" {
-    bucket         = "${var.account_id}"
-    key            = "statefolder/${var.account_id}/aws_infra.tfstate"
-    region         = "ap-south-1"
-    dynamodb_table = "${var.account_id}"
-    encrypt        = true
-  }
+  backend "s3" {}
 }
