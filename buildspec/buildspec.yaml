@@ -3,6 +3,10 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - sudo yum install -y yum-utils shadow-utils tar 
+      - sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+      - sudo yum -y install terraform
+      - RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.46.0
       - cd Main_infra
       - mkdir Output/
       - echo ----------------aws creds----------------
