@@ -3,7 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - sudo yum install -y yum-utils shadow-utils tar 
+      - sudo yum install -y yum-utils shadow-utils tar jq
       - sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
       - sudo yum -y install terraform
       - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin latest
@@ -20,6 +20,11 @@ phases:
           echo ----------------Doing Trivy Security scan---------------
           trivy config --exit-code 1 --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL ./
         fi
+      - echo ----------------Fetching account list from SSM----------------
+      - ACCOUNTS_JSON=$(aws ssm get-parameter --name "/ACCOUNTS" --with-decryption --query "Parameter.Value" --output text)
+      - echo "Accounts from SSM: $ACCOUNTS_JSON"
+      - ACCOUNTS=$(echo $ACCOUNTS_JSON | jq -r '.[]')
+      - echo "Accounts seperate from SSM: $ACCOUNTS"
     
   build:
     commands:
