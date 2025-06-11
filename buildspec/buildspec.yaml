@@ -37,14 +37,14 @@ phases:
           echo "=============================================================="
           if [ "$TF_ITEM" = "plan" ]; then
             echo ----------------checking terraform init----------------
-            terraform init -backend-config="bucket=satish-multi-account-terraform" -backend-config="key=statefolder/$ACCOUNT_ID/terraform.tfstate" -backend-config="region=ap-south-1"
+            terraform init -backend-config="bucket=codepipeline-bucket-satish-terraform" -backend-config="key=statefolder/$ACCOUNT_ID/terraform.tfstate" -backend-config="region=ap-south-1"
             echo ----------------Doing Terraform plan---------------------
             terraform plan -var="account_id=$ACCOUNT_ID"
             echo ----------------terraform plan completed on `date`------------------
             touch Output/plan-$ACCOUNT_ID-done
           elif [ "$TF_ITEM" = "apply" ]; then
             echo ----------------checking terraform init----------------
-            terraform init -backend-config="bucket=satish-multi-account-terraform" -backend-config="key=statefolder/$ACCOUNT_ID/terraform.tfstate" -backend-config="region=ap-south-1" 
+            terraform init -backend-config="bucket=codepipeline-bucket-satish-terraform" -backend-config="key=statefolder/$ACCOUNT_ID/terraform.tfstate" -backend-config="region=ap-south-1" 
             echo ----------------Doing Terraform apply----------------
             terraform apply -var="account_id=$ACCOUNT_ID" --auto-approve
             echo ----------------terraform apply completed on `date`-----------------
