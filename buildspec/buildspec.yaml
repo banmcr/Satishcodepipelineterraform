@@ -23,7 +23,7 @@ phases:
       - echo ----------------Fetching account list from SSM----------------
       - ACCOUNTS_JSON=$(aws ssm get-parameter --name "/ACCOUNTS" --with-decryption --query "Parameter.Value" --output text)
       - echo "Accounts from SSM - $ACCOUNTS_JSON"
-      - ACCOUNTS=$(echo $ACCOUNTS_JSON | jq -r '.[]')
+      - ACCOUNTS=$(echo $ACCOUNTS_JSON | tr ',' ' ')
       - echo "Accounts seperate from SSM - $ACCOUNTS"
     
   build:
