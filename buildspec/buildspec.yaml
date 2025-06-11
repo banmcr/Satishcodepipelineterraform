@@ -29,6 +29,7 @@ phases:
         for ACCOUNT_ID in $ACCOUNTS; do
           echo "Assumed role into $ACCOUNT_ID"
           aws sts get-caller-identity
+        done
     
   build:
     commands:
