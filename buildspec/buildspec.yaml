@@ -25,6 +25,10 @@ phases:
       - echo "Accounts from SSM - $ACCOUNTS_JSON"
       - ACCOUNTS=$(echo $ACCOUNTS_JSON | tr ',' ' ')
       - echo "Accounts seperate from SSM - $ACCOUNTS"
+      - |
+        for ACCOUNT_ID in $ACCOUNTS; do
+          echo "Assumed role into $ACCOUNT_ID"
+          aws sts get-caller-identity
     
   build:
     commands:
