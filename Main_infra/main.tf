@@ -1,26 +1,25 @@
 
 data "aws_region" "current" {}
 
-resource "aws_security_group" "name" {
-    name = "asd"
-    vpc_id = "vpc-07b5343a7c443a28b"
-    description = "asdsad"
-    ingress {
-    from_port        = "-1"
-    to_port          = "-1"
-    protocol         = "icmp"
-    cidr_blocks      = ["1.1.1.1/32"]
-    description = "icmp"
+resource "aws_iam_policy" "policy" {
+  name        = "test_policy"
+  path        = "/"
+  description = "My test policy"
 
-  }
-    egress {
-    from_port        = "-1"
-    to_port          = "-1"
-    protocol         = "icmp"
-    cidr_blocks      = ["1.1.1.1/32"]
-    description = "icmp"
-
-  }
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ec2:Describe*",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
 }
 
 output "regionname" {
