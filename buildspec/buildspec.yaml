@@ -19,6 +19,8 @@ phases:
         if [ "$TF_ITEM" = "scan" ]; then
           echo ----------------Doing Trivy Security scan---------------
           trivy config --exit-code 1 --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL ./
+          echo ----------------terraform Trevy Scan completed on `date`------------
+          touch Output/$TF_ITEM-file-ItIsEmpty
         fi
       - echo ----------------Fetching account list from SSM----------------
       - ACCOUNTS_JSON=$(aws ssm get-parameter --name "/ACCOUNTS" --with-decryption --query "Parameter.Value" --output text)
@@ -34,33 +36,27 @@ phases:
   build:
     commands:
       - |
-        if [ "$TF_ITEM" = "plan" ]; then
+        for ACCOUNT_ID in $ACCOUNTS; do
+          echo "Running Terraform for account: $ACCOUNT_ID"
           echo ----------------checking terraform init----------------
-          terraform init
-          echo ----------------Doing Terraform plan---------------------
-          terraform plan
-        elif [ "$TF_ITEM" = "apply" ]; then
-          echo ----------------checking terraform init----------------
-          terraform init
-          echo ----------------Doing 1st Terraform apply----------------
-          terraform apply --auto-approve
-          echo ----------------Doing 2nd terraform apply----------------
-          terraform apply --auto-approve
-        fi
+          terraform init -reconfigure
+          if [ "$TF_ITEM" = "plan" ]; then
+            echo ----------------Doing Terraform plan---------------------
+            terraform plan -var="account_id=$ACCOUNT_ID"
+            echo ----------------terraform plan completed on `date`------------------
+            touch Output/plan-$ACCOUNT_ID-done
+          elif [ "$TF_ITEM" = "apply" ]; then
+            echo ----------------Doing Terraform apply----------------
+            terraform apply -var="account_id=$ACCOUNT_ID" --auto-approve
+            echo ----------------terraform apply completed on `date`-----------------
+            touch Output/scan-$ACCOUNT_ID-done
+          fi
+        done
     
   post_build:
     commands:
-      - |
-        if [ "$TF_ITEM" = "scan" ]; then
-          echo ----------------terraform Trevy Scan completed on `date`------------
-          touch Output/$TF_ITEM-file-ItIsEmpty
-        elif [ "$TF_ITEM" = "plan" ]; then
-          echo ----------------terraform plan completed on `date`------------------
-          touch Output/$TF_ITEM-file-ItIsEmpty
-        elif [ "$TF_ITEM" = "apply" ]; then
-          echo ----------------terraform apply completed on `date`-----------------
-          touch Output/$TF_ITEM-file-ThisFileIsEmpty
-        fi
+      - echo "Completed Terraform loop for all accounts"
+      - ls -lh Output/
 
 artifacts:
   files:
