@@ -1,0 +1,53 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - cd Main_infra
+      - mkdir Output/
+      - echo ----------------aws creds----------------
+      - aws sts get-caller-identity
+      - echo ----------------checking terraform version----------------
+      - terraform --version
+      - echo ----------------checking trivy version----------------
+      - trivy --version
+      - |
+        if [ "$TF_ITEM" = "scan" ]; then
+          echo ----------------Doing Trivy Security scan---------------
+        fi
+    
+  build:
+    commands:
+      - |
+        if [ "$TF_ITEM" = "plan" ]; then
+          echo ----------------checking terraform init----------------
+          terraform init
+          echo ----------------Doing Terraform plan---------------------
+          terraform plan
+        elif [ "$TF_ITEM" = "apply" ]; then
+          echo ----------------checking terraform init----------------
+          terraform init
+          echo ----------------Doing 1st Terraform apply----------------
+          terraform apply --auto-approve
+          echo ----------------Doing 2nd terraform apply----------------
+          terraform apply --auto-approve
+        fi
+    
+  post_build:
+    commands:
+      - |
+        if [ "$TF_ITEM" = "scan" ]; then
+          echo ----------------terraform Trevy Scan completed on `date`------------
+          touch Output/$TF_ITEM-file-ItIsEmpty
+        elif [ "$TF_ITEM" = "plan" ]; then
+          echo ----------------terraform plan completed on `date`------------------
+          touch Output/$TF_ITEM-file-ItIsEmpty
+        elif [ "$TF_ITEM" = "apply" ]; then
+          echo ----------------terraform apply completed on `date`-----------------
+          touch Output/$TF_ITEM-file-ThisFileIsEmpty
+        fi
+
+artifacts:
+  files:
+    - 'Main_infra/Output/*'
+     
