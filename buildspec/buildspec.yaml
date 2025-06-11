@@ -37,7 +37,9 @@ phases:
     commands:
       - |
         for ACCOUNT_ID in $ACCOUNTS; do
+          echo "=============================================================="
           echo "Running Terraform for account: $ACCOUNT_ID"
+          echo "=============================================================="
           echo ----------------checking terraform init----------------
           terraform init -reconfigure
           if [ "$TF_ITEM" = "plan" ]; then
