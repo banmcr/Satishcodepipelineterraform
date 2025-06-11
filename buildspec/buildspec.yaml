@@ -6,8 +6,7 @@ phases:
       - sudo yum install -y yum-utils shadow-utils tar 
       - sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
       - sudo yum -y install terraform
-      - RELEASE_VERSION=$(grep -Po '(?<=VERSION_ID=")[0-9]' /etc/os-release)
-      - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin $RELEASE_VERSION
+      - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin latest
       - cd Main_infra
       - mkdir Output/
       - echo ----------------aws creds----------------
