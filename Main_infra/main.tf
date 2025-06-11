@@ -10,6 +10,7 @@ resource "aws_security_group" "name" {
     to_port          = "-1"
     protocol         = "icmp"
     cidr_blocks      = ["1.1.1.1/32"]
+    description = "icmp"
 
   }
     egress {
@@ -17,6 +18,7 @@ resource "aws_security_group" "name" {
     to_port          = "-1"
     protocol         = "icmp"
     cidr_blocks      = ["1.1.1.1/32"]
+    description = "icmp"
 
   }
 }
