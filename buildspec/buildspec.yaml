@@ -18,6 +18,7 @@ phases:
       - |
         if [ "$TF_ITEM" = "scan" ]; then
           echo ----------------Doing Trivy Security scan---------------
+          trivy config --exit-code 1 --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL ./
         fi
     
   build:
